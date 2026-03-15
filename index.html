@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PP Serv-Festa – Depósito de Bebidas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --azul-escuro: #0d47a1;
+      --azul: #1976d2;
+      --vermelho: #ef5350;
+      --verde: #22c55e;
+      --amarelo: #fbbf24;
+      --cinza-claro: #f8fafc;
+      --preto: #111;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cinza-claro);
+      color: var(--preto);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--azul-escuro), var(--azul));
+      color: white;
+      padding: 1rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      font-size: 2.4rem;
+      font-weight: bold;
+    }
+
+    .logo .p1 { color: #60a5fa; }
+    .logo .p2 { color: var(--vermelho); }
+
+    .hero {
+      height: 80vh;
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)),
+                  url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&q=80') center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      margin-top: 60px;
+    }
+
+    .hero h1 { font-size: 4.5rem; text-shadow: 3px 3px 10px black; }
+    .hero p { font-size: 1.6rem; margin: 1rem 0; }
+
+    .btn-primario {
+      background: var(--vermelho);
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.3rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primario:hover { background: #d32f2f; transform: scale(1.05); }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+
+    h2.section-title {
+      text-align: center;
+      font-size: 2.4rem;
+      margin: 3rem 0 1.5rem;
+      color: var(--azul);
+    }
+
+    .categorias {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .categoria-btn {
+      padding: 0.9rem 1.8rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    .categoria-btn:hover { transform: translateY(-4px); }
+
+    .btn-cerveja   { background: #fbbf24; color: #333; }
+    .btn-refri     { background: #4ade80; color: white; }
+    .btn-licor     { background: #a855f7; color: white; }
+    .btn-energetico{ background: #f97316; color: white; }
+
+    .grade-produtos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .card-produto {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+
+    .card-produto:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+
+    .card-produto img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .info-produto {
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .preco {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--vermelho);
+      margin: 0.6rem 0;
+    }
+
+    .btn-adicionar {
+      background: var(--verde);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-adicionar:hover { background: #16a34a; transform: scale(1.05); }
+
+    #secao-carrinho {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 3rem auto;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .item-carrinho {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    #total-carrinho {
+      font-size: 1.8rem;
+      text-align: right;
+      margin: 1.5rem 0;
+      color: var(--vermelho);
+    }
+
+    .btn-finalizar {
+      background: var(--azul);
+      color: white;
+      border: none;
+      padding: 1.2rem 3rem;
+      font-size: 1.3rem;
+      border-radius: 50px;
+      cursor: pointer;
+      display: block;
+      margin: 2rem auto;
+    }
+
+    .btn-finalizar:hover { background: var(--azul-escuro); }
+
+    /* Checkout */
+    #checkout {
+      display: none;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 3rem auto;
+      max-width: 600px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    form label {
+      display: block;
+      margin: 1.2rem 0 0.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.9rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1.1rem;
+    }
+
+    #info-frete {
+      margin: 1rem 0;
+      font-weight: bold;
+      color: var(--azul);
+    }
+
+    footer {
+      background: var(--azul-escuro);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span class="p1">P</span><span class="p2">P</span> Serv-Festa
+    </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>Bebidas para sua Festa!</h1>
+      <p>Geladas, baratas e com entrega rápida</p>
+      <button class="btn-primario" onclick="document.getElementById('secao-produtos').scrollIntoView({behavior:'smooth'})">
+        Ver Produtos
+      </button>
+    </div>
+  </section>
+
+  <div class="container">
+
+    <h2 class="section-title">Categorias</h2>
+    <div class="categorias">
+      <button class="categoria-btn btn-cerveja" onclick="mostrarCategoria('cervejas')">Cervejas</button>
+      <button class="categoria-btn btn-refri" onclick="mostrarCategoria('refrigerantes')">Refrigerantes</button>
+      <button class="categoria-btn btn-licor" onclick="mostrarCategoria('licores')">Licores</button>
+      <button class="categoria-btn btn-energetico" onclick="mostrarCategoria('energeticos')">Energéticos</button>
+    </div>
+
+    <section id="secao-produtos">
+      <h2 class="section-title" id="titulo-categoria">Selecione uma categoria</h2>
+      <div class="grade-produtos" id="grade-produtos"></div>
+    </section>
+
+    <section id="secao-carrinho">
+      <h2 class="section-title">Seu Carrinho</h2>
+      <div id="lista-carrinho"></div>
+      <div id="total-carrinho">Total: R$ 0,00</div>
+      <button class="btn-finalizar" onclick="mostrarCheckout()">Finalizar Pedido</button>
+    </section>
+
+    <!-- Área de Finalização com CEP, complemento, pagamento -->
+    <section id="checkout">
+      <h2 class="section-title">Finalizar Pedido</h2>
+
+      <form id="form-checkout">
+        <label for="cep">CEP *</label>
+        <input type="text" id="cep" maxlength="9" placeholder="00000-000" required>
+
+        <button type="button" class="btn-primario" style="margin:1rem 0; background:var(--azul);" onclick="calcularFrete()">
+          Calcular Frete
+        </button>
+        <div id="info-frete"></div>
+
+        <label for="numero">Número da casa *</label>
+        <input type="text" id="numero" required>
+
+        <label for="complemento">Complemento</label>
+        <input type="text" id="complemento">
+
+        <label for="pagamento">Forma de Pagamento *</label>
+        <select id="pagamento" required>
+          <option value="">Selecione</option>
+          <option value="debito">Débito</option>
+          <option value="credito">Crédito</option>
+          <option value="pix">PIX</option>
+        </select>
+
+        <button type="button" class="btn-finalizar" onclick="enviarPedidoWhatsApp()">Confirmar e Enviar Pedido</button>
+      </form>
+    </section>
+
+  </div>
+
+  <footer>
+    <p>PP Serv-Festa – Depósito de Bebidas • WhatsApp: (17) 3121-6005</p>
+  </footer>
+
+  <script>
+    // Produtos de exemplo
+    const bebidas = {
+      cervejas: [
+        { nome: "Brahma 600ml", preco: 6.90, img: "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&q=80&w=800" },
+        { nome: "Skol 473ml Lata", preco: 5.50, img: "https://images.unsplash.com/photo-1581092160560-1c1e428e9d65?auto=format&fit=crop&q=80&w=800" },
+        { nome: "Heineken Long Neck", preco: 9.90, img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&q=80&w=800" },
+      ],
+      refrigerantes: [
+        { nome: "Coca-Cola 2L", preco: 9.80, img: "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?auto=format&fit=crop&q=80&w=800" },
+        { nome: "Guaraná Antarctica 2L", preco: 8.50, img: "https://images.unsplash.com/photo-1625772299848-361b803ffa25?auto=format&fit=crop&q=80&w=800" },
+      ],
+      licores: [
+        { nome: "Cachaça 51 965ml", preco: 24.90, img: "https://via.placeholder.com/800x600?text=Cachaca" },
+        { nome: "Vodka Smirnoff 1L", preco: 59.90, img: "https://via.placeholder.com/800x600?text=Vodka" },
+      ],
+      energeticos: [
+        { nome: "Monster 473ml", preco: 13.90, img: "https://via.placeholder.com/800x600?text=Monster" },
+        { nome: "Red Bull 250ml", preco: 11.90, img: "https://via.placeholder.com/800x600?text=Red+Bull" },
+      ]
+    };
+
+    let carrinho = [];
+    let freteCalculado = 0;
+
+    // Máscara CEP
+    document.getElementById('cep').addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\D/g, '');
+      v = v.replace(/^(\d{5})(\d)/, '$1-$2');
+      e.target.value = v;
+    });
+
+    function mostrarCategoria(categoria) {
+      document.getElementById('titulo-categoria').textContent = categoria.charAt(0).toUpperCase() + categoria.slice(1);
+      const grade = document.getElementById('grade-produtos');
+      grade.innerHTML = '';
+
+      bebidas[categoria].forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card-produto';
+        card.innerHTML = `
+          <img src="${item.img}" alt="${item.nome}">
+          <div class="info-produto">
+            <h3>${item.nome}</h3>
+            <div class="preco">R$ ${item.preco.toFixed(2)}</div>
+            <button class="btn-adicionar" onclick="adicionarCarrinho('${item.nome}', ${item.preco})">
+              <i class="fas fa-cart-plus"></i> Adicionar
+            </button>
+          </div>
+        `;
+        grade.appendChild(card);
+      });
+    }
+
+    function adicionarCarrinho(nome, preco) {
+      carrinho.push({ nome, preco });
+      atualizarCarrinho();
+    }
+
+    function atualizarCarrinho() {
+      const lista = document.getElementById('lista-carrinho');
+      lista.innerHTML = '';
+      let total = 0;
+
+      carrinho.forEach((item, i) => {
+        total += item.preco;
+        const div = document.createElement('div');
+        div.className = 'item-carrinho';
+        div.innerHTML = `
+          ${item.nome} — R$ ${item.preco.toFixed(2)}
+          <button onclick="removerItem(${i})" style="background:#ef4444;color:white;border:none;padding:0.5rem;border-radius:6px;cursor:pointer;">×</button>
+        `;
+        lista.appendChild(div);
+      });
+
+      document.getElementById('total-carrinho').textContent = `Total produtos: R$ ${total.toFixed(2)}`;
+    }
+
+    function removerItem(index) {
+      carrinho.splice(index, 1);
+      atualizarCarrinho();
+    }
+
+    function mostrarCheckout() {
+      if (carrinho.length === 0) {
+        alert('Seu carrinho está vazio!');
+        return;
+      }
+      document.getElementById('checkout').style.display = 'block';
+      window.scrollTo({ top: document.getElementById('checkout').offsetTop - 80, behavior: 'smooth' });
+    }
+
+    function calcularFrete() {
+      const cep = document.getElementById('cep').value.trim();
+      if (!cep || cep.length < 9) {
+        alert('Digite um CEP válido (00000-000)!');
+        return;
+      }
+
+      // Simulação realista de frete (em produção use API Melhor Envio ou similar)
+      const cepNumero = parseInt(cep.replace('-', ''));
+      let frete = 15.00; // base
+
+      if (cepNumero >= 10000000 && cepNumero <= 39999999) frete = 12.00; // SP/MG
+      else if (cepNumero >= 40000000 && cepNumero <= 48999999) frete = 18.00; // BA
+      else frete = 25.00; // outros estados
+
+      freteCalculado = frete;
+      document.getElementById('info-frete').innerHTML = `Frete estimado para CEP ${cep}: <strong>R$ ${frete.toFixed(2)}</strong> (aprox. 3-7 dias)`;
+    }
+
+    function enviarPedidoWhatsApp() {
+      const cep = document.getElementById('cep').value.trim();
+      const numero = document.getElementById('numero').value.trim();
+      const complemento = document.getElementById('complemento').value.trim();
+      const pagamento = document.getElementById('pagamento').value;
+
+      if (!cep || !numero || !pagamento) {
+        alert('Preencha CEP, número e forma de pagamento!');
+        return;
+      }
+
+      let totalProdutos = carrinho.reduce((sum, item) => sum + item.preco, 0);
+      let totalFinal = totalProdutos + freteCalculado;
+
+      let msg = "🍻 *PEDIDO PP SERV-FESTA* 🍻\n\n";
+      carrinho.forEach(item => msg += `• ${item.nome} ─ R$ ${item.preco.toFixed(2)}\n`);
+      msg += `\n*Total produtos:* R$ ${totalProdutos.toFixed(2)}`;
+      msg += `\n*Frete:* R$ ${freteCalculado.toFixed(2)}`;
+      msg += `\n*Total final:* R$ ${totalFinal.toFixed(2)}`;
+      msg += `\n*Pagamento:* ${pagamento.toUpperCase()}`;
+      msg += `\n*Endereço:* CEP ${cep}, Nº ${numero}`;
+      if (complemento) msg += `, ${complemento}`;
+
+      const url = `https://wa.me/551731216005?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+
+      // Limpa carrinho após envio (opcional)
+      // carrinho = [];
+      // atualizarCarrinho();
+      // document.getElementById('checkout').style.display = 'none';
+    }
+
+    // Inicia com cervejas
+    mostrarCategoria('cervejas');
+  </script>
+</body>
+</html>
